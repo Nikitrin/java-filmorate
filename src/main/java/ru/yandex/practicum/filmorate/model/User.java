@@ -15,7 +15,6 @@ public class User {
     @Size(min = 1, max = 200, message = "Max length of login is 200 characters, min length is 1 character")
     @Pattern(regexp = "^\\S*$", message = "Login cannot contain spaces")
     private String login;
-    @NotNull (message = "Name can't be null")
     private String name;
     @NotNull(message = "Birthday can't be null")
     @PastOrPresent (message = "Date can't be more than today")
