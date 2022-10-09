@@ -28,9 +28,6 @@ public class FilmService {
         if (film.getDuration().isNegative()) {
             throw new InvalidInput("Duration can't be zero or negative");
         }
-        if (film.getDescription().length() > 200) {
-            throw new InvalidInput("Description can't be more then 200 characters");
-        }
         if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
             throw new InvalidInput("Release date can't be more than 1895-12-28");
         }
