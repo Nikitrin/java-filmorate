@@ -1,12 +1,18 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
 public class User {
     private Long id;
+    private Set<Long> friends;
     @Email (message = "Invalid email")
     private String email;
     @NotNull (message = "Login can't be null")
