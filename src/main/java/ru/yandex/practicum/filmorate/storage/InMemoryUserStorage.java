@@ -1,45 +1,55 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.adapter.LocalDateAdapter;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage{
     private final Map<Long, User> users = new HashMap<>();
     private Long lastId = 0L;
-    private final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-            .create();
 
-    public void saveUser(User user) {
+    @Override
+    public User saveUser(User user) {
         if (user.getName() == null || user.getName().equals("")) {
             user.setName(user.getLogin());
         }
         user.setId(++lastId);
+        user.setFriends(new HashSet<>());
         users.put(user.getId(), user);
+        return user;
     }
 
-    public String userToJson(User user) {
-        return gson.toJson(user);
-    }
-
-    public void updateUser(User user) {
+    @Override
+    public User updateUser(User user) {
         if (!users.containsKey(user.getId())) {
             throw new NotFoundException(String.format("User with id=%s not found", user.getId()));
         }
-        users.put(user.getId(), user);
+        User updateUser = users.get(user.getId());
+        updateUser.setName(user.getName());
+        updateUser.setLogin(user.getLogin());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setBirthday(user.getBirthday());
+        return updateUser;
     }
 
-    public String getUsers() {
-        return gson.toJson(new ArrayList<>(users.values()));
+    @Override
+    public ArrayList<User> getUsers() {
+        return new ArrayList<>(users.values());
+    }
+
+    @Override
+    public Boolean isUserExists(Long id) {
+        return users.containsKey(id);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        if (!users.containsKey(id)) {
+            throw new NotFoundException(String.format("User with id=%s not found", id));
+        }
+        return users.get(id);
     }
 }

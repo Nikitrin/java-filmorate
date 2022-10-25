@@ -24,14 +24,14 @@ public class FilmController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public String saveFilmJson(@Valid @RequestBody Film film) {
-        logger.info("Save user from json: {}", film);
+        logger.info("Save film from json: {}", film);
         filmStorage.saveFilm(film);
         return filmStorage.filmToJson(film);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public String updateFilm(@Valid @RequestBody Film film) {
-        logger.info("Update user from json: {}", film);
+        logger.info("Update film from json: {}", film);
         filmStorage.updateFilm(film);
         return filmStorage.filmToJson(film);
     }

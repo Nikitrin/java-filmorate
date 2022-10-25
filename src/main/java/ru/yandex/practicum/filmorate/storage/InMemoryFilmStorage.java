@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.adapter.DurationAdapter;
 import ru.yandex.practicum.filmorate.adapter.LocalDateAdapter;
-import ru.yandex.practicum.filmorate.exception.InvalidInput;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.time.Duration;
@@ -24,21 +24,24 @@ public class InMemoryFilmStorage implements FilmStorage{
             .registerTypeAdapter(Duration.class, new DurationAdapter())
             .create();
 
+    @Override
     public void saveFilm(Film film) {
         if (film.getDuration().isNegative()) {
-            throw new InvalidInput("Duration can't be zero or negative");
+            throw new ValidationException("Duration can't be zero or negative");
         }
         if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
-            throw new InvalidInput("Release date can't be more than 1895-12-28");
+            throw new ValidationException("Release date can't be more than 1895-12-28");
         }
         film.setId(++lastId);
         films.put(film.getId(), film);
     }
 
+    @Override
     public String filmToJson(Film film) {
         return gson.toJson(film);
     }
 
+    @Override
     public void updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException(String.format("Film with id=%s not found", film.getId()));
@@ -46,6 +49,7 @@ public class InMemoryFilmStorage implements FilmStorage{
         films.put(film.getId(), film);
     }
 
+    @Override
     public String getFilms() {
         return gson.toJson(new ArrayList<>(films.values()));
     }

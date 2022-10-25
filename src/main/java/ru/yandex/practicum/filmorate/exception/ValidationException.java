@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.exception;
 
-public class InvalidInput extends RuntimeException{
+public class ValidationException extends RuntimeException{
     private final String message;
-    public InvalidInput(String message) {
+    public ValidationException(String message) {
         super(message);
         this.message = message;
     }
