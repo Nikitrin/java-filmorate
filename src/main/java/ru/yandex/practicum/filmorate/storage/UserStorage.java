@@ -1,15 +1,14 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.User;
-
-import java.util.ArrayList;
+import java.util.List;
 
 public interface UserStorage {
     User saveUser(User user);
 
     User updateUser(User user);
 
-    ArrayList<User> getUsers();
+    List<User> getUsers();
 
     Boolean isUserExists(Long id);
 

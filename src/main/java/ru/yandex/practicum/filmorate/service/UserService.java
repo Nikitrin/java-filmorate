@@ -19,14 +19,18 @@ public class UserService {
     }
 
     public List<User> addFriendById(Long id, Long friendId) {
-        if (id.equals(friendId)) {
-            throw new ValidationException("You can't add yourself as a friend");
-        }
         if (!userStorage.isUserExists(id)) {
             throw new NotFoundException(String.format("User with id=%s not found", id));
         }
         if (!userStorage.isUserExists(friendId)) {
             throw new NotFoundException(String.format("Friend with id=%s not found", friendId));
+        }
+        if (id.equals(friendId)) {
+            throw new ValidationException("You can't add yourself as a friend");
+        }
+        if (userStorage.getUserById(id).getFriends().contains(friendId)) {
+            throw new ValidationException(
+                    String.format("User with an id=%s has already been added to friends", friendId));
         }
         userStorage.getUserById(id).getFriends().add(friendId);
         userStorage.getUserById(friendId).getFriends().add(id);

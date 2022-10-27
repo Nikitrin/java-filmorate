@@ -1,13 +1,16 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import java.util.List;
 
 public interface FilmStorage {
-    void saveFilm(Film film);
+    Film saveFilm(Film film);
 
-    String filmToJson(Film film);
+    Film updateFilm(Film film);
 
-    void updateFilm(Film film);
+    List<Film> getFilms();
 
-    String getFilms();
+    Film getFilmsById(Long id);
+
+    Boolean isFilmExist(Long id);
 }
