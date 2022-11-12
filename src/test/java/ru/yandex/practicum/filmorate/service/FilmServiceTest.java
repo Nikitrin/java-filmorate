@@ -1,61 +1,90 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
-
-import java.time.Duration;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-class FilmServiceTest {
-    private final FilmStorage filmStorage = new InMemoryFilmStorage();
-    private final UserStorage userStorage = new InMemoryUserStorage();
-    private final FilmService filmService = new FilmService(filmStorage, userStorage);
-
-
+class FilmServiceTest extends ServiceTest{
     @Test
+    @DisplayName("Get a list of popular films")
     void getFilmPopular() {
-        Film goodNurse = filmStorage.saveFilm(new Film(null, null,
-                "Good Nurse", "About a serial killer",
-                LocalDate.of(2022, 9, 11), Duration.ofMinutes(121)));
-        Film fall = filmStorage.saveFilm(new Film(null, null,
-                "Fall", "About survival",
-                LocalDate.of(2022, 8, 11), Duration.ofMinutes(107)));
-        Film palmSprings = filmStorage.saveFilm(new Film(null, null,
-                "Palm Springs", "About a time loop",
-                LocalDate.of(2020, 7, 10), Duration.ofMinutes(90)));
         ArrayList<Film> popularFilms = new ArrayList<>();
-        popularFilms.add(goodNurse);
-        Assertions.assertEquals(new ArrayList<Film>(), filmService.getFilmPopular(0));
-        Assertions.assertEquals(popularFilms, filmService.getFilmPopular(1));
-        User Semen = userStorage.saveUser(new User(null, null,
-                "semen@ya.ru", "$emenbI4", "Semen",
-                LocalDate.of(1995, 2, 26)));
-        User Svetlana = userStorage.saveUser(new User(null, null,
-                "sveta.vasa@mail.ru", "milachka", "SvetlanaVasilievna",
-                LocalDate.of(1986, 10, 4)));
-        User Bob = userStorage.saveUser(new User(null, null,
-                "bobina@gmail.com", "bob40000", "Bob",
-                LocalDate.of(2003, 4, 17)));
+        Assertions.assertEquals(popularFilms, filmService.getFilmPopular(0),
+                "Get 0 popular movies");
 
-        Assertions.assertEquals(1, Semen.getId());
+        popularFilms.add(filmGoodNurse);
+        Assertions.assertEquals(popularFilms, filmService.getFilmPopular(1),
+                "If the films have an equal number of likes, then get film by smaller id");
 
+        filmService.addLikeToFilm(2L, 1L);
+        popularFilms.clear();
+        popularFilms.add(filmFall);
+        Assertions.assertEquals(popularFilms, filmService.getFilmPopular(1),
+                "Get 1 popular film");
+
+        filmService.addLikeToFilm(1L, 1L);
+        popularFilms.clear();
+        popularFilms.add(filmGoodNurse);
+        popularFilms.add(filmFall);
+        Assertions.assertEquals(popularFilms, filmService.getFilmPopular(2),
+                "Get 2 popular films");
+
+        popularFilms.add(filmPalmSprings);
+        Assertions.assertEquals(popularFilms, filmService.getFilmPopular(10),
+                "Get more films than saved in storage");
     }
 
     @Test
+    @DisplayName("User likes film")
     void addLikeToFilm() {
+        Film film = filmService.addLikeToFilm(1L, 1L);
+        Set<Long> likes = new HashSet<>();
+        likes.add(1L);
+        Assertions.assertEquals(likes, film.getLikes(), "Checking the returned value with 1 like");
+        Assertions.assertEquals(likes, filmStorage.getFilmsById(1L).getLikes(),
+                "Checking the saved value with 1 like");
+
+        film = filmService.addLikeToFilm(1L, 3L);
+        likes.add(3L);
+        Assertions.assertEquals(likes, film.getLikes(), "Checking the returned value with 2 like");
+        Assertions.assertEquals(likes, filmStorage.getFilmsById(1L).getLikes(),
+                "Checking the saved value with 2 like");
+
+        Assertions.assertThrows(NotFoundException.class, () -> filmService.addLikeToFilm(10L, 1L),
+                "Film was not found by id");
+        Assertions.assertThrows(NotFoundException.class, () -> filmService.addLikeToFilm(1L, 10L),
+                "User was not found by id");
+        Assertions.assertThrows(ValidationException.class, () -> filmService.addLikeToFilm(1L, 1L),
+                "User has already liked this film");
     }
 
     @Test
+    @DisplayName("User removes like of film")
     void removeLikeFromFilm() {
+        Assertions.assertThrows(NotFoundException.class, () -> filmService.removeLikeFromFilm(10L, 1L),
+                "Film was not found by id");
+        Assertions.assertThrows(NotFoundException.class, () -> filmService.removeLikeFromFilm(1L, 10L),
+                "User was not found by id");
+        Assertions.assertThrows(ValidationException.class, () -> filmService.removeLikeFromFilm(1L, 1L),
+                "Film has not like from user");
+
+        filmService.addLikeToFilm(2L, 2L);
+        Film film = filmService.removeLikeFromFilm(2L, 2L);
+        Set<Long> likes = new HashSet<>();
+        Assertions.assertEquals(likes, film.getLikes(), "Checking the returned value with 0 like");
+        Assertions.assertEquals(likes, filmStorage.getFilmsById(2L).getLikes(),
+                "Checking the saved value with 0 like");
+
+        filmService.addLikeToFilm(2L, 1L);
+        filmService.addLikeToFilm(2L, 3L);
+        film = filmService.removeLikeFromFilm(2L, 1L);
+        likes.add(3L);
+        Assertions.assertEquals(likes, film.getLikes(), "Checking the returned value with 1 like");
+        Assertions.assertEquals(likes, filmStorage.getFilmsById(2L).getLikes(),
+                "Checking the saved value with 1 like");
     }
 }
