@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.*;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @Setter
 @Getter
+@EqualsAndHashCode
 @AllArgsConstructor
 public class Film {
     private Long id;

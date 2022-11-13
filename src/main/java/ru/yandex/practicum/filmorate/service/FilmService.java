@@ -49,29 +49,29 @@ public class FilmService {
         if (!filmStorage.isFilmExist(id)) {
             throw new NotFoundException(String.format("Film with id=%s not found", id));
         }
-        if (!userStorage.isUserExists(userId)) {
+        if (!userStorage.isUserExist(userId)) {
             throw new NotFoundException(String.format("User with id=%s not found", userId));
         }
-        if (filmStorage.getFilmsById(id).getLikes().contains(userId)) {
+        if (filmStorage.getFilmById(id).getLikes().contains(userId)) {
             throw new ValidationException(
                     String.format("User with id=%s has already liked film with id=%s", userId, id));
         }
-        filmStorage.getFilmsById(id).getLikes().add(userId);
-        return filmStorage.getFilmsById(id);
+        filmStorage.getFilmById(id).getLikes().add(userId);
+        return filmStorage.getFilmById(id);
     }
 
     public Film removeLikeFromFilm(Long id, Long userId) {
         if (!filmStorage.isFilmExist(id)) {
             throw new NotFoundException(String.format("Film with id=%s not found", id));
         }
-        if (!userStorage.isUserExists(userId)) {
+        if (!userStorage.isUserExist(userId)) {
             throw new NotFoundException(String.format("User with id=%s not found", userId));
         }
-        if (!filmStorage.getFilmsById(id).getLikes().contains(userId)) {
+        if (!filmStorage.getFilmById(id).getLikes().contains(userId)) {
             throw new ValidationException(
                     String.format("Film with id=%s has not like from user with id=%s", id, userId));
         }
-        filmStorage.getFilmsById(id).getLikes().remove(userId);
-        return filmStorage.getFilmsById(id);
+        filmStorage.getFilmById(id).getLikes().remove(userId);
+        return filmStorage.getFilmById(id);
     }
 }

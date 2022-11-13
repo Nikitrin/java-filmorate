@@ -10,7 +10,7 @@ public interface UserStorage {
 
     List<User> getUsers();
 
-    Boolean isUserExists(Long id);
+    Boolean isUserExist(Long id);
 
     User getUserById(Long id);
 }

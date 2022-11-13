@@ -10,7 +10,7 @@ public interface FilmStorage {
 
     List<Film> getFilms();
 
-    Film getFilmsById(Long id);
+    Film getFilmById(Long id);
 
     Boolean isFilmExist(Long id);
 }

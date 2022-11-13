@@ -19,10 +19,10 @@ public class UserService {
     }
 
     public List<User> addFriendById(Long id, Long friendId) {
-        if (!userStorage.isUserExists(id)) {
+        if (!userStorage.isUserExist(id)) {
             throw new NotFoundException(String.format("User with id=%s not found", id));
         }
-        if (!userStorage.isUserExists(friendId)) {
+        if (!userStorage.isUserExist(friendId)) {
             throw new NotFoundException(String.format("Friend with id=%s not found", friendId));
         }
         if (id.equals(friendId)) {
@@ -38,10 +38,10 @@ public class UserService {
     }
 
     public List<User> getFriendsCommon(Long id, Long otherId) {
-        if (!userStorage.isUserExists(id)) {
+        if (!userStorage.isUserExist(id)) {
             throw new NotFoundException(String.format("User with id=%s not found", id));
         }
-        if (!userStorage.isUserExists(otherId)) {
+        if (!userStorage.isUserExist(otherId)) {
             throw new NotFoundException(String.format("Other user with id=%s not found", otherId));
         }
         Set<Long> intersection = new HashSet<>(userStorage.getUserById(id).getFriends());
@@ -52,7 +52,7 @@ public class UserService {
     }
 
     public List<User> getFriends(Long id) {
-        if (!userStorage.isUserExists(id)) {
+        if (!userStorage.isUserExist(id)) {
             throw new NotFoundException(String.format("User with id=%s not found", id));
         }
         return userStorage.getUserById(id).getFriends().stream()
@@ -61,11 +61,15 @@ public class UserService {
     }
 
     public List<User> removeFriendById(Long id, Long friendId) {
-        if (!userStorage.isUserExists(id)) {
+        if (!userStorage.isUserExist(id)) {
             throw new NotFoundException(String.format("User with id=%s not found", id));
         }
-        if (!userStorage.isUserExists(friendId)) {
+        if (!userStorage.isUserExist(friendId)) {
             throw new NotFoundException(String.format("Friend with id=%s not found", friendId));
+        }
+        if (!userStorage.getUserById(id).getFriends().contains(friendId)) {
+            throw new ValidationException(
+                    String.format("User with an id=%s does not have friend with id=%s", id, friendId));
         }
         userStorage.getUserById(id).getFriends().remove(friendId);
         userStorage.getUserById(friendId).getFriends().remove(id);

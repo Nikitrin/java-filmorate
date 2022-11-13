@@ -45,13 +45,13 @@ class FilmServiceTest extends ServiceTest{
         Set<Long> likes = new HashSet<>();
         likes.add(1L);
         Assertions.assertEquals(likes, film.getLikes(), "Checking the returned value with 1 like");
-        Assertions.assertEquals(likes, filmStorage.getFilmsById(1L).getLikes(),
+        Assertions.assertEquals(likes, filmStorage.getFilmById(1L).getLikes(),
                 "Checking the saved value with 1 like");
 
         film = filmService.addLikeToFilm(1L, 3L);
         likes.add(3L);
         Assertions.assertEquals(likes, film.getLikes(), "Checking the returned value with 2 like");
-        Assertions.assertEquals(likes, filmStorage.getFilmsById(1L).getLikes(),
+        Assertions.assertEquals(likes, filmStorage.getFilmById(1L).getLikes(),
                 "Checking the saved value with 2 like");
 
         Assertions.assertThrows(NotFoundException.class, () -> filmService.addLikeToFilm(10L, 1L),
@@ -76,7 +76,7 @@ class FilmServiceTest extends ServiceTest{
         Film film = filmService.removeLikeFromFilm(2L, 2L);
         Set<Long> likes = new HashSet<>();
         Assertions.assertEquals(likes, film.getLikes(), "Checking the returned value with 0 like");
-        Assertions.assertEquals(likes, filmStorage.getFilmsById(2L).getLikes(),
+        Assertions.assertEquals(likes, filmStorage.getFilmById(2L).getLikes(),
                 "Checking the saved value with 0 like");
 
         filmService.addLikeToFilm(2L, 1L);
@@ -84,7 +84,7 @@ class FilmServiceTest extends ServiceTest{
         film = filmService.removeLikeFromFilm(2L, 1L);
         likes.add(3L);
         Assertions.assertEquals(likes, film.getLikes(), "Checking the returned value with 1 like");
-        Assertions.assertEquals(likes, filmStorage.getFilmsById(2L).getLikes(),
+        Assertions.assertEquals(likes, filmStorage.getFilmById(2L).getLikes(),
                 "Checking the saved value with 1 like");
     }
 }

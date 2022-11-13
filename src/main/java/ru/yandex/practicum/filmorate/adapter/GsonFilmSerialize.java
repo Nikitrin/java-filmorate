@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class GsonFilmAdapter {
+public class GsonFilmSerialize {
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
