@@ -1,52 +1,77 @@
 package ru.yandex.practicum.filmorate.service;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import ru.yandex.practicum.filmorate.adapter.DurationAdapter;
-import ru.yandex.practicum.filmorate.adapter.LocalDateAdapter;
-import ru.yandex.practicum.filmorate.exception.InvalidInput;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-
-import java.time.Duration;
-import java.time.LocalDate;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Objects;
+import java.util.TreeSet;
 
+@Service
 public class FilmService {
-    private static final Map<Long, Film> films = new HashMap<>();
-    private static Long lastId = 0L;
-    private static final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .create();
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+    private final TreeSet<Film> filmsPopular = new TreeSet<>(
+            (o1, o2) -> {
+                Integer likes1 = o1.getLikes().size();
+                Integer likes2 = o2.getLikes().size();
+                if (!likes1.equals(likes2)) {
+                    return likes1.compareTo(likes2);
+                }
+                return o2.getId().compareTo(o1.getId());
+            });
 
-    public static void saveFilm(Film film) {
-        if (film.getDuration().isNegative()) {
-            throw new InvalidInput("Duration can't be zero or negative");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
-            throw new InvalidInput("Release date can't be more than 1895-12-28");
-        }
-        film.setId(++lastId);
-        films.put(film.getId(), film);
+    @Autowired
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
-    public static String filmToJson(Film film) {
-        return gson.toJson(film);
-    }
-
-    public static void updateFilm(Film film) {
-        if (!films.containsKey(film.getId())) {
-            throw new NotFoundException(String.format("Film with id=%s not found", film.getId()));
+    public List<Film> getFilmPopular(Integer count) {
+        filmsPopular.addAll(filmStorage.getFilms());
+        ArrayList<Film> popularFilms = new ArrayList<>();
+        int numberOfFilms = Objects.requireNonNullElse(count, 10);
+        if (numberOfFilms > filmsPopular.size()) {
+            numberOfFilms = filmsPopular.size();
         }
-        films.put(film.getId(), film);
+        for (int i = 0; i < numberOfFilms; i++) {
+            popularFilms.add(filmsPopular.pollLast());
+        }
+        return popularFilms;
     }
 
-    public static String getFilms() {
-        return gson.toJson(new ArrayList<>(films.values()));
+    public Film addLikeToFilm(Long id, Long userId) {
+        if (!filmStorage.isFilmExist(id)) {
+            throw new NotFoundException(String.format("Film with id=%s not found", id));
+        }
+        if (!userStorage.isUserExist(userId)) {
+            throw new NotFoundException(String.format("User with id=%s not found", userId));
+        }
+        if (filmStorage.getFilmById(id).getLikes().contains(userId)) {
+            throw new ValidationException(
+                    String.format("User with id=%s has already liked film with id=%s", userId, id));
+        }
+        filmStorage.getFilmById(id).getLikes().add(userId);
+        return filmStorage.getFilmById(id);
+    }
+
+    public Film removeLikeFromFilm(Long id, Long userId) {
+        if (!filmStorage.isFilmExist(id)) {
+            throw new NotFoundException(String.format("Film with id=%s not found", id));
+        }
+        if (!userStorage.isUserExist(userId)) {
+            throw new NotFoundException(String.format("User with id=%s not found", userId));
+        }
+        if (!filmStorage.getFilmById(id).getLikes().contains(userId)) {
+            throw new ValidationException(
+                    String.format("Film with id=%s has not like from user with id=%s", id, userId));
+        }
+        filmStorage.getFilmById(id).getLikes().remove(userId);
+        return filmStorage.getFilmById(id);
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ru.yandex.practicum.filmorate.exception.InvalidInput;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.OffsetDateTime;
@@ -37,11 +37,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         logger.error("Not found error: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());
-        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(value = InvalidInput.class)
-    protected ResponseEntity<Object> handleInvalidInput(InvalidInput ex, WebRequest request) {
+    @ExceptionHandler(value = ValidationException.class)
+    protected ResponseEntity<Object> handleInvalidInput(ValidationException ex, WebRequest request) {
         logger.error("Not found error: {}", ex.getMessage());
         Map<String, Object> body = getGeneralErrorBody(HttpStatus.NOT_FOUND, request);
         body.put(REASONS, ex.getMessage());
