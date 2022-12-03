@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
@@ -15,8 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class User {
     @Expose
-    private Long id;
-    private Set<Long> friends;
+    private Integer id;
     @Expose
     @Email (message = "Invalid email")
     private String email;

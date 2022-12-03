@@ -1,14 +1,17 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.inmemory;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.dao.UserStorage;
+
 import java.util.*;
 
 @Component
-public class InMemoryUserStorage implements UserStorage{
-    private final Map<Long, User> users = new HashMap<>();
-    private Long lastId = 0L;
+public class InMemoryUserStorage implements UserStorage {
+    private final Map<Integer, User> users = new HashMap<>();
+    private Integer lastId = 0;
 
     @Override
     public User saveUser(User user) {
@@ -16,7 +19,7 @@ public class InMemoryUserStorage implements UserStorage{
             user.setName(user.getLogin());
         }
         user.setId(++lastId);
-        user.setFriends(new HashSet<>());
+      //  user.setFriends(new HashSet<>());
         users.put(user.getId(), user);
         return user;
     }
@@ -40,12 +43,12 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public Boolean isUserExist(Long id) {
+    public Boolean isUserExist(Integer id) {
         return users.containsKey(id);
     }
 
     @Override
-    public User getUserById(Long id) {
+    public User getUserById(Integer id) {
         if (!users.containsKey(id)) {
             throw new NotFoundException(String.format("User with id=%s not found", id));
         }

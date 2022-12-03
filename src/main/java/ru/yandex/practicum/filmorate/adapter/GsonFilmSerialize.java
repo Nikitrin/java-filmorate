@@ -13,7 +13,6 @@ public class GsonFilmSerialize {
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
             .create();
 
     public static String toJson(Film film) {
