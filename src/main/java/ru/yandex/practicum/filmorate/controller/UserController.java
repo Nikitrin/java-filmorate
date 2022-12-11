@@ -1,17 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.adapter.GsonUserSerialize;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.dao.UserStorage;
+
 import javax.validation.Valid;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(
         value = "/users",
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -20,12 +22,6 @@ public class UserController {
     private final UserStorage userStorage;
     private final UserService userService;
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
-
-    @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
-        this.userStorage = userStorage;
-        this.userService = userService;
-    }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public String saveUserJson(@Valid @RequestBody User user) {

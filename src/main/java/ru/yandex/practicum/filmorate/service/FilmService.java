@@ -1,19 +1,16 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.dao.FilmLikesStorage;
+
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
     private final FilmLikesStorage filmLikesStorage;
-
-    @Autowired
-    public FilmService(FilmLikesStorage filmLikesStorage) {
-        this.filmLikesStorage = filmLikesStorage;
-    }
 
     public List<Film> getFilmPopular(Integer count) {
         return filmLikesStorage.getFilmPopular(count);

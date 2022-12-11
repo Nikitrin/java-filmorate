@@ -1,17 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.adapter.GsonFilmSerialize;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.dao.FilmStorage;
+
 import javax.validation.Valid;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(
         value = "/films",
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -20,11 +22,6 @@ public class FilmController {
     private final FilmStorage filmStorage;
     private final FilmService filmService;
     private final Logger logger = LoggerFactory.getLogger(FilmController.class);
-    @Autowired
-    public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
-        this.filmService = filmService;
-    }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public String saveFilmJson(@Valid @RequestBody Film film) {

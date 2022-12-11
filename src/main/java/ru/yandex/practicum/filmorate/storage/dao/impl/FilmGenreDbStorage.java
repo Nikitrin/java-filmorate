@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dao.FilmGenresStorage;
 import ru.yandex.practicum.filmorate.storage.dao.GenreStorage;
+
 import java.util.ArrayList;
 import java.util.List;
 
