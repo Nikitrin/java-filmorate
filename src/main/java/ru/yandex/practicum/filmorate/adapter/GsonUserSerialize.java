@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+
 import java.time.LocalDate;
 import java.util.List;
 

@@ -1,6 +1,7 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.dao;
 
 import ru.yandex.practicum.filmorate.model.User;
+
 import java.util.List;
 
 public interface UserStorage {
@@ -10,7 +11,7 @@ public interface UserStorage {
 
     List<User> getUsers();
 
-    Boolean isUserExist(Long id);
+    Boolean isUserExist(Integer id);
 
-    User getUserById(Long id);
+    User getUserById(Integer id);
 }

@@ -12,7 +12,7 @@ class GsonUserSerializeTest {
 
     @Test
     void userToJson() {
-        User userSvetlana = new User(1L, new HashSet<>(),
+        User userSvetlana = new User(1,
                 "sveta.v@mail.ru", "milachka", "SvetVasilievna",
                 LocalDate.of(1986, 10, 4));
         String json = "{\n" +
@@ -27,10 +27,10 @@ class GsonUserSerializeTest {
 
     @Test
     void listOfUsersToJson() {
-        User userSvetlana = new User(1L, new HashSet<>(),
+        User userSvetlana = new User(1,
                 "sveta.v@mail.ru", "milachka", "SvetVasilievna",
                 LocalDate.of(1986, 10, 4));
-        User userBob = new User(2L, new HashSet<>(),
+        User userBob = new User(2,
                 "bobina@gmail.com", "bob40000", "Bob",
                 LocalDate.of(2003, 4, 17));
         String json = "[\n" +

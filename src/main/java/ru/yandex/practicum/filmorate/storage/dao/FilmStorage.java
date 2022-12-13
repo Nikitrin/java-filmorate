@@ -1,6 +1,7 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.dao;
 
 import ru.yandex.practicum.filmorate.model.Film;
+
 import java.util.List;
 
 public interface FilmStorage {
@@ -10,7 +11,7 @@ public interface FilmStorage {
 
     List<Film> getFilms();
 
-    Film getFilmById(Long id);
+    Film getFilmById(Integer id);
 
-    Boolean isFilmExist(Long id);
+    Boolean isFilmExist(Integer id);
 }
